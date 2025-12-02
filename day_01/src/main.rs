@@ -1,7 +1,13 @@
 mod parser;
 mod dial;
 
-use common::{Input, ProblemQuestion, Solution};
+use common::{
+    init_logger,
+    Input, 
+    ProblemQuestion, 
+    Solution
+};
+
 use parser::DialInstructionParser;
 use dial::{
     DialInstruction, 
@@ -39,6 +45,7 @@ impl Solution<ProblemTwo> for DialPasswordSolution {
 
 
 fn main() {
+    init_logger();
     ProblemOne::solve::<DialPasswordSolution>(TEST_INPUT);
     ProblemTwo::solve::<DialPasswordSolution>(TEST_INPUT);
 }

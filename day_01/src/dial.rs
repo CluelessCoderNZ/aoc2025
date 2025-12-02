@@ -1,3 +1,5 @@
+use log::debug;
+
 #[derive(Debug)]
 pub enum DialInstruction {
     Left(i32),
@@ -48,7 +50,7 @@ impl DialPosition {
         };
 
         let pos = self.pos();
-        println!("Move {action:?} -> {pos} ({click_count})");
+        debug!("Move {action:?} -> {pos} ({click_count})");
         
         click_count
     }
