@@ -1,5 +1,3 @@
-
-
 #[derive(Debug)]
 pub enum DialInstruction {
     Left(i32),
@@ -60,10 +58,9 @@ impl DialPosition {
     }
 }
 
-
-
 pub fn count_zeros(instructions: Vec<DialInstruction>) -> usize {
     let mut dial = DialPosition::default();
+
     instructions.into_iter().map(|instr| {
         dial.apply(instr);
         dial.pos()
@@ -73,7 +70,42 @@ pub fn count_zeros(instructions: Vec<DialInstruction>) -> usize {
 
 pub fn count_clicks(instructions: Vec<DialInstruction>) -> i32 {
     let mut dial = DialPosition::default();
+
     instructions.into_iter()
     .map(|instr| dial.apply(instr))
     .sum()
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::{
+        DialInstruction,
+        count_clicks
+    };
+
+    #[test]
+    fn test_rollover() {
+        let instructions = vec![
+            DialInstruction::Left(1000)
+        ];
+        assert_eq!(count_clicks(instructions), 10)
+    }
+
+    #[test]
+    fn test_rollover_remainder() {
+        let instructions = vec![
+            DialInstruction::Left(1050)
+        ];
+        assert_eq!(count_clicks(instructions), 11)
+    }
+
+    #[test]
+    fn test_rollover_remainder_rollover() {
+        let instructions = vec![
+            DialInstruction::Left(1051)
+        ];
+        assert_eq!(count_clicks(instructions), 11)
+    }
+
 }

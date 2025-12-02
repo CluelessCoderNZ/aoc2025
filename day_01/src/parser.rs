@@ -13,9 +13,9 @@ use nom::{
 pub struct DialInstructionParser;
 
 impl LineInputParser for DialInstructionParser {
-    type Output = DialInstruction;
+    type LineOutput = DialInstruction;
 
-    fn parse_line(line: &str) -> Self::Output {
+    fn parse_line(line: &str) -> Self::LineOutput {
         alt((Self::parse_left, Self::parse_right))
         .parse(line)
         .expect("Line parses ok")

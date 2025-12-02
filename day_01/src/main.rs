@@ -1,88 +1,76 @@
 mod parser;
 mod dial;
-use common::Input;
+
+use common::{Input, ProblemQuestion, Solution};
 use parser::DialInstructionParser;
 use dial::{
-    count_zeros,
-    count_clicks
+    DialInstruction, 
+    count_clicks, 
+    count_zeros
 };
 
-fn part_one() {
-    let instructions = Input::from_test_file().parse::<DialInstructionParser>();
-    let password = count_zeros(instructions);
-    println!("Part 1 Password: {password}");
+
+const TEST_INPUT: Input = Input::from_str(include_str!("../input"));
+
+struct ProblemOne;
+impl ProblemQuestion for ProblemOne {
+    type Parser = DialInstructionParser;
+    type Output = usize;
 }
 
-fn part_two() {
-    let instructions = Input::from_test_file().parse::<DialInstructionParser>();
-    let password = count_clicks(instructions);
-    println!("Part 2 Password: {password}");
+struct ProblemTwo;
+impl ProblemQuestion for ProblemTwo {
+    type Parser = DialInstructionParser;
+    type Output = i32;
 }
+
+struct DialPasswordSolution;
+impl Solution<ProblemOne> for DialPasswordSolution {
+    fn answer(input: Vec<DialInstruction>) -> usize {
+        count_zeros(input)
+    }
+}
+
+impl Solution<ProblemTwo> for DialPasswordSolution {
+    fn answer(input: Vec<DialInstruction>) -> i32 {
+        count_clicks(input)
+    }
+}
+
 
 fn main() {
-    part_one();
-    part_two();
+    ProblemOne::solve::<DialPasswordSolution>(TEST_INPUT);
+    ProblemTwo::solve::<DialPasswordSolution>(TEST_INPUT);
 }
 
 
 #[cfg(test)]
 mod test {
-    use common::Input;
+    use common::{
+        Input, 
+        ProblemQuestion
+    };
     use crate::{
-        dial::{
-            DialInstruction, 
-            count_clicks, 
-            count_zeros
-        }, 
-        parser::DialInstructionParser
+        DialPasswordSolution, 
+        ProblemOne, 
+        ProblemTwo
     };
 
-    const EXAMPLE: &str =
-"L68
-L30
-R48
-L5
-R60
-L55
-L1
-L99
-R14
-L82";
+    const TEST_EXAMPLE: Input = Input::from_str(include_str!("../example"));
 
     #[test]
     fn test_example_part1() {
-        let instructions = Input::from_str(EXAMPLE).parse::<DialInstructionParser>();
-        assert_eq!(count_zeros(instructions), 3);
+        assert_eq!(
+            ProblemOne::solve::<DialPasswordSolution>(TEST_EXAMPLE),
+            3
+        );
     }
 
     #[test]
     fn test_example_part2() {
-        let instructions = Input::from_str(EXAMPLE).parse::<DialInstructionParser>();
-
-        assert_eq!(count_clicks(instructions), 6);
-    }
-
-    #[test]
-    fn test_rollover() {
-        let instructions = vec![
-            DialInstruction::Left(1000)
-        ];
-        assert_eq!(count_clicks(instructions), 10)
-    }
-
-    #[test]
-    fn test_rollover_remainder() {
-        let instructions = vec![
-            DialInstruction::Left(1050)
-        ];
-        assert_eq!(count_clicks(instructions), 11)
-    }
-
-    #[test]
-    fn test_rollover_remainder_rollover() {
-        let instructions = vec![
-            DialInstruction::Left(1051)
-        ];
-        assert_eq!(count_clicks(instructions), 11)
+        assert_eq!(
+            ProblemTwo::solve::<DialPasswordSolution>(TEST_EXAMPLE),
+            6
+        );
     }
 }

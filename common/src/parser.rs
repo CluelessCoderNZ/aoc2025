@@ -5,13 +5,13 @@ pub trait InputParser {
 }
 
 pub trait LineInputParser {
-    type Output;
+    type LineOutput;
 
-    fn parse_line(line: &str) -> Self::Output;
+    fn parse_line(line: &str) -> Self::LineOutput;
 }
 
 impl<T: LineInputParser> InputParser for T {
-    type Output = Vec<T::Output>;
+    type Output = Vec<T::LineOutput>;
 
     fn parse_input(input: &str) -> Self::Output {
         input.lines().map(|line| Self::parse_line(line)).collect()
