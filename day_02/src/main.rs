@@ -36,7 +36,7 @@ impl DayTwoSolution {
             let top = id / divisor;
             let bottom = id - (top * divisor);
 
-            log::trace!("{id}: {top}=={bottom}");
+            //log::trace!("{id}: {top}=={bottom}");
             return top == bottom;
         } else {
             false
@@ -66,7 +66,7 @@ impl DayTwoSolution {
         while value != 0 {
             let divisor = 10u64.pow(n);
             let pattern = value - ((value / divisor) * divisor);
-            log::trace!("{value}[:{n}] = {pattern}");
+            //log::trace!("{value}[:{n}] = {pattern}");
             
             if last_pattern.is_some() && last_pattern != Some(pattern) {
                 return false;

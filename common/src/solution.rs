@@ -12,10 +12,14 @@ pub trait ProblemQuestion: Sized {
     fn solve<S: Solution<Self>>(input: Input) -> Self::Output {
         let solution_name = type_name::<S>();
         let problem_name = type_name::<Self>();
-        info!("Running Solution {solution_name} for {problem_name}");
+        info!("Running {solution_name} for {problem_name}");
 
+        let timer = std::time::Instant::now();
         let result  = S::answer(input.parse::<Self::Parser>());
+        let duration = timer.elapsed();
+        
         info!("Solution Result: {result}");
+        info!("Duration: {duration:?}");
 
         result
     }
