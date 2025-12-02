@@ -3,7 +3,6 @@ mod parser;
 use std::ops::RangeInclusive;
 
 use common::{
-    init_logger,
     Input, 
     ProblemQuestion, 
     Solution
@@ -102,7 +101,6 @@ impl Solution<ProblemTwo> for DayTwoSolution {
 
 
 fn main() {
-    init_logger();
     ProblemOne::solve::<DayTwoSolution>(TEST_INPUT);
     ProblemTwo::solve::<DayTwoSolution>(TEST_INPUT);
 }

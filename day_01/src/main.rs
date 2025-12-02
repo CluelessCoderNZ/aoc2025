@@ -2,7 +2,6 @@ mod parser;
 mod dial;
 
 use common::{
-    init_logger,
     Input, 
     ProblemQuestion, 
     Solution
@@ -46,7 +45,6 @@ impl Solution<ProblemTwo> for DialPasswordSolution {
 
 
 fn main() {
-    init_logger();
     ProblemOne::solve::<DialPasswordSolution>(TEST_INPUT);
     ProblemTwo::solve::<DialPasswordSolution>(TEST_INPUT);
 }
