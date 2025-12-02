@@ -16,7 +16,8 @@ use dial::{
 };
 
 
-const TEST_INPUT: Input = Input::from_str(include_str!("../input"));
+pub const TEST_INPUT: Input = Input::from_str(include_str!("../input"));
+pub const TEST_EXAMPLE: Input = Input::from_str(include_str!("../example"));
 
 struct ProblemOne;
 impl ProblemQuestion for ProblemOne {
@@ -54,16 +55,14 @@ fn main() {
 #[cfg(test)]
 mod test {
     use common::{
-        Input, 
         ProblemQuestion
     };
     use crate::{
         DialPasswordSolution, 
         ProblemOne, 
-        ProblemTwo
+        ProblemTwo,
+        TEST_EXAMPLE
     };
-
-    const TEST_EXAMPLE: Input = Input::from_str(include_str!("../example"));
 
     #[test]
     fn test_example_part1() {

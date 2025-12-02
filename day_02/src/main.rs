@@ -10,8 +10,8 @@ use common::{
 };
 use parser::IdRangeListParser;
 
-const TEST_INPUT: Input = Input::from_str(include_str!("../input"));
-const TEST_EXAMPLE: Input = Input::from_str(include_str!("../example"));
+pub const TEST_INPUT: Input = Input::from_str(include_str!("../input"));
+pub const TEST_EXAMPLE: Input = Input::from_str(include_str!("../example"));
 
 struct ProblemOne;
 impl ProblemQuestion for ProblemOne {
