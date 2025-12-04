@@ -9,6 +9,23 @@ mod solution;
 pub use solution::ProblemQuestion;
 pub use solution::Solution;
 
+mod grid;
+pub use grid::{
+    GridUnit,
+    Point2D,
+    Vector2D,
+    Size2D,
+    Rect,
+};
+pub use grid::{
+    Direction,
+    CardinalDirection,
+    OrdinalDirection,
+};
+pub use grid::{
+    Grid2D,
+    Grid2DParser
+};
 
 fn init_logger(is_test: bool) {
     env_logger::builder()
