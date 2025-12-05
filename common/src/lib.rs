@@ -4,6 +4,9 @@ pub use input::Input;
 mod parser;
 pub use parser::InputParser;
 pub use parser::LineInputParser;
+pub use parser::DualSectionParser;
+pub use parser::InclusiveRangeListParser;
+pub use parser::FromStrParser;
 
 mod solution;
 pub use solution::ProblemQuestion;
