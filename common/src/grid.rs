@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 use std::fmt::{Debug, Display};
+use std::str::FromStr;
 
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -103,6 +104,13 @@ impl<T> Grid2D<T> {
     pub fn point_iter(&self) -> impl Iterator<Item = Point2D> {
         (0..self.height)
         .flat_map(|y| (0..self.width).map(move |x| Point2D::new(x, y)))
+    }
+
+    pub fn columns_iter(&self) -> impl Iterator<Item = impl Iterator<Item = Point2D>> {
+        (0..self.width).map(|x| {
+             (0..self.height)
+                .map(move |y| Point2D::new(x, y))
+        })
     }
 
     pub fn element_iter(&self) -> impl Iterator<Item = (&T, Point2D)> {
@@ -211,6 +219,41 @@ impl<T: TryFrom<char>> InputParser for Grid2DParser<T>
         assert_eq!(width * height, elements.len() as isize);
 
         Grid2D::<T> {
+            elements,
+            width,
+            height
+        }
+    }
+}
+
+pub struct Grid2DWhitespaceParser<T: FromStr> {
+    pub _element_type: PhantomData<T>
+}
+
+impl<T: FromStr> Grid2DWhitespaceParser<T> 
+    where <T as FromStr>::Err: Debug
+{
+    fn parse_line(line: &str) -> impl Iterator<Item = T> {
+        line.split_whitespace()
+            .map(|token| T::from_str(token).expect("Parse item okay"))
+    }
+}
+
+impl<T: FromStr> InputParser for Grid2DWhitespaceParser<T> 
+    where <T as FromStr>::Err: Debug
+{
+    type Output = Grid2D<T>;
+
+    fn parse_input(input: &str) -> Self::Output {
+        let grid_lines: Vec<Vec<T>> = input.lines()
+            .map(|line| Self::parse_line(line).collect())
+            .collect();
+
+        let height = grid_lines.len() as isize;
+        let width = grid_lines.get(0).expect("At least one line of input").len() as isize;
+        let elements = grid_lines.into_iter().flatten().collect();
+
+        Self::Output {
             elements,
             width,
             height

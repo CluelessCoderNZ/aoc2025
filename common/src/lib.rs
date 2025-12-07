@@ -27,7 +27,8 @@ pub use grid::{
 };
 pub use grid::{
     Grid2D,
-    Grid2DParser
+    Grid2DParser,
+    Grid2DWhitespaceParser
 };
 
 fn init_logger(is_test: bool) {
