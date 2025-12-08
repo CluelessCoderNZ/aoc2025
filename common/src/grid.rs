@@ -17,6 +17,9 @@ pub type Rect = euclid::Rect<isize, GridUnit>;
 
 pub trait Direction: IntoEnumIterator + Debug {
     fn delta(&self) -> Vector2D;
+
+    fn rotate(&self) -> Self;
+    fn rotate_ccw(&self) -> Self;
 }
 
 #[derive(Debug, EnumIter)]
@@ -34,6 +37,24 @@ impl Direction for CardinalDirection {
             Self::E    => Vector2D::new(1 ,0),
             Self::S    => Vector2D::new(0 ,1),
             Self::W    => Vector2D::new(-1,0),
+        }
+    }
+    
+    fn rotate(&self) -> Self {
+        match self {
+            Self::N    => Self::E,
+            Self::E    => Self::S,
+            Self::S    => Self::W,
+            Self::W    => Self::N,
+        }
+    }
+    
+    fn rotate_ccw(&self) -> Self {
+        match self {
+            Self::N    => Self::W,
+            Self::E    => Self::N,
+            Self::S    => Self::E,
+            Self::W    => Self::S,
         }
     }
 }
@@ -63,6 +84,34 @@ impl Direction for OrdinalDirection {
             Self::NW   => Vector2D::new(-1,-1),
         }
     }
+    
+    fn rotate(&self) -> Self {
+        match self {
+            Self::N    => Self::NE,
+            Self::NE   => Self::E,
+            Self::E    => Self::SE,
+            Self::SE   => Self::S,
+            Self::S    => Self::SW,
+            Self::SW   => Self::W,
+            Self::W    => Self::NW,
+            Self::NW   => Self::N,
+        }
+    }
+    
+    fn rotate_ccw(&self) -> Self {
+        match self {
+            Self::N    => Self::NW,
+            Self::NE   => Self::N,
+            Self::E    => Self::NE,
+            Self::SE   => Self::E,
+            Self::S    => Self::SE,
+            Self::SW   => Self::S,
+            Self::W    => Self::SW,
+            Self::NW   => Self::W,
+        }
+    }
+
+    
 }
 
 
