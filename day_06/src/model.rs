@@ -1,22 +1,26 @@
-use std::{fmt::Display, ops::{Add, Mul}, str::FromStr};
+use std::{
+    fmt::Display,
+    ops::{Add, Mul},
+    str::FromStr,
+};
 
 use common::Grid2D;
-
 
 #[derive(Debug, Clone, Copy)]
 pub enum MathOperator {
     Add,
-    Multiply
+    Multiply,
 }
 
 impl MathOperator {
-    pub fn apply<T>(&self, a: T, b: T) -> T where 
+    pub fn apply<T>(&self, a: T, b: T) -> T
+    where
         T: Add<Output = T>,
-        T: Mul<Output = T>
+        T: Mul<Output = T>,
     {
         match self {
             Self::Add => a.add(b),
-            Self::Multiply => a.mul(b)
+            Self::Multiply => a.mul(b),
         }
     }
 
@@ -25,7 +29,7 @@ impl MathOperator {
             MathOperator::Add => 0,
             MathOperator::Multiply => 1,
         }
-    } 
+    }
 }
 
 impl Display for MathOperator {
@@ -40,7 +44,7 @@ impl Display for MathOperator {
 #[derive(Debug, Clone)]
 pub enum MathCell {
     Number(u64, String),
-    Op(MathOperator)
+    Op(MathOperator),
 }
 
 impl FromStr for MathCell {
@@ -63,14 +67,21 @@ impl MathCell {
     pub fn as_op(self) -> Option<MathOperator> {
         match self {
             Self::Op(op) => Some(op),
-            _ => None
+            _ => None,
         }
     }
 
     pub fn as_num(self) -> Option<u64> {
         match self {
             Self::Number(val, _) => Some(val),
-            _ => None
+            _ => None,
+        }
+    }
+
+    pub fn as_num_str(self) -> Option<String> {
+        match self {
+            Self::Number(_, str) => Some(str),
+            _ => None,
         }
     }
 }
@@ -88,12 +99,68 @@ pub type MathHomework = Grid2D<MathCell>;
 
 pub fn get_equations(homework: &MathHomework) -> impl Iterator<Item = (Vec<u64>, MathOperator)> {
     homework.columns_iter().map(|column| {
-        let mut column: Vec<MathCell> = column.map(|point| homework.get(point).unwrap().clone()).collect();
-        let op = column.pop()
+        let mut column: Vec<MathCell> = column
+            .map(|point| homework.get(point).unwrap().clone())
+            .collect();
+        let op = column
+            .pop()
             .map(|cell| cell.as_op().expect("Last item is operator"))
             .expect("At least one row of operators");
-        let values = column.into_iter().map(|cell| cell.as_num().expect("Column composed of values")).collect();
+        let values = column
+            .into_iter()
+            .map(|cell| cell.as_num().expect("Column composed of values"))
+            .collect();
 
         (values, op)
     })
+}
+
+/// Warning: Invariant of using Space Perserving Parser is not enforced
+pub fn get_cephalopod_equations(
+    homework: &MathHomework,
+) -> impl Iterator<Item = (Vec<u64>, MathOperator)> {
+    homework.columns_iter().map(|column| {
+        let mut column: Vec<MathCell> = column
+            .map(|point| homework.get(point).unwrap().clone())
+            .collect();
+        let op = column
+            .pop()
+            .map(|cell| cell.as_op().expect("Last item is operator"))
+            .expect("At least one row of operators");
+        let value_strs = column
+            .into_iter()
+            .map(|cell| cell.as_num_str().expect("Column composed of values"))
+            .collect();
+        let values = cephlapod_transpose(value_strs);
+
+        (values, op)
+    })
+}
+
+fn cephlapod_transpose(values: Vec<String>) -> Vec<u64> {
+    let mut output = Vec::new();
+
+    let values: Vec<Vec<char>> = values
+        .into_iter()
+        .map(|str| str.chars().collect())
+        .collect();
+    let max_length = values
+        .iter()
+        .map(|val| val.len())
+        .max()
+        .expect("At least one element");
+    let value_count = values.len();
+
+    for i in (0..max_length).rev() {
+        let mut vertical: String = String::with_capacity(value_count);
+        for value_str in &values {
+            vertical.push(value_str.get(i).cloned().unwrap_or(' '));
+        }
+
+        if let Ok(val) = u64::from_str(vertical.trim()) {
+            output.push(val);
+        }
+    }
+
+    output
 }
