@@ -149,6 +149,7 @@ name = "day_06"
 version = "0.1.0"
 dependencies = [
  "common",
+ "nom",
 ]
 
 [[package]]

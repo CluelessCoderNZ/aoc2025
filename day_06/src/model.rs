@@ -37,9 +37,9 @@ impl Display for MathOperator {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub enum MathCell {
-    Number(u64),
+    Number(u64, String),
     Op(MathOperator)
 }
 
@@ -51,8 +51,8 @@ impl FromStr for MathCell {
             return Ok(Self::Op(MathOperator::Add));
         } else if s.contains('*') {
             return Ok(Self::Op(MathOperator::Multiply));
-        } else if let Ok(val) = u64::from_str(s) {
-            return Ok(Self::Number(val));
+        } else if let Ok(val) = u64::from_str(s.trim()) {
+            return Ok(Self::Number(val, s.to_string()));
         }
 
         return Err(());
@@ -69,7 +69,7 @@ impl MathCell {
 
     pub fn as_num(self) -> Option<u64> {
         match self {
-            Self::Number(val) => Some(val),
+            Self::Number(val, _) => Some(val),
             _ => None
         }
     }
@@ -78,7 +78,7 @@ impl MathCell {
 impl Display for MathCell {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            MathCell::Number(val) => write!(f, "{:^5}", val),
+            MathCell::Number(val, _) => write!(f, "{:^5}", val),
             MathCell::Op(math_operator) => write!(f, "{:^5}", math_operator.to_string()),
         }
     }
