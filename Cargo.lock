@@ -160,6 +160,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "day_08"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "euclid",
+ "itertools",
+]
+
+[[package]]
 name = "dtor"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -32,6 +32,18 @@ impl<T: LineInputParser> InputParser for T {
     }
 }
 
+pub struct CSVParser<T: FromStr> {
+    _element: PhantomData<T>,
+}
+
+impl<T: FromStr> LineInputParser for CSVParser<T> where <T as FromStr>::Err: Debug {
+    type LineOutput = Vec<T>;
+
+    fn parse_line(line: &str) -> Self::LineOutput {
+        line.split(',').map(|token| T::from_str(token).expect("Parse token ok")).collect()
+    }
+}
+
 
 fn split_parse<'a, P: InputParser>(input: &'a str, delimiter: &str) -> Option<(P::Output, &'a str)> {
     let (parser_input, remainder) = input.split_once(delimiter)?;

@@ -7,6 +7,7 @@ pub use parser::LineInputParser;
 pub use parser::DualSectionParser;
 pub use parser::InclusiveRangeListParser;
 pub use parser::FromStrParser;
+pub use parser::CSVParser;
 
 mod solution;
 pub use solution::ProblemQuestion;
