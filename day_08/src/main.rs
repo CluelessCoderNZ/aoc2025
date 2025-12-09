@@ -37,21 +37,22 @@ impl<const N: usize> DayEightSolution<N> {
         let mut circuits: Vec<HashSet<Point3D>> = Vec::new();
         
         for (a, b) in Self::get_shortest_pairs(&input) {
-            let a_circuit = circuits.iter().position(|set: &HashSet<Point3D>| set.contains(&a));
-            let b_circuit = circuits.iter().position(|set: &HashSet<Point3D>| set.contains(&b));
+            let circuit_a_maybe = circuits.iter().position(|set: &HashSet<Point3D>| set.contains(&a));
+            let circuit_b_maybe = circuits.iter().position(|set: &HashSet<Point3D>| set.contains(&b));
 
-            match (a_circuit, b_circuit) {
+            match (circuit_a_maybe, circuit_b_maybe) {
                 (Some(index_a), Some(index_b)) => {
                     if index_a != index_b {
-                        let circuit = circuits.remove(index_b);
-                        circuits[index_a].extend(circuit);
+                        let circuit_b = circuits[index_b].clone();
+                        circuits[index_a].extend(circuit_b);
+                        circuits.remove(index_b);
                     }
                 },
-                (None, Some(index)) => {
-                    circuits[index].insert(a);
+                (None, Some(index_b)) => {
+                    circuits[index_b].insert(a);
                 },
-                (Some(index), None) => {
-                    circuits[index].insert(b);
+                (Some(index_a), None) => {
+                    circuits[index_a].insert(b);
                 },
                 (None, None) => {
                     circuits.push(HashSet::from([a, b]));
