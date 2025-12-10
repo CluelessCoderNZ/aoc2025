@@ -1,0 +1,5 @@
+
+enum TileCell {
+    Red,
+    Green
+}
