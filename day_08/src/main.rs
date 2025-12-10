@@ -1,3 +1,4 @@
+use core::panic;
 use std::collections::HashSet;
 
 use common::{Input, ProblemQuestion, Solution};
@@ -15,13 +16,13 @@ impl ProblemQuestion for ProblemOne {
     type Output = u64;
 }
 
-// struct ProblemTwo;
-// impl ProblemQuestion for ProblemTwo {
-//     type Parser = Point3DParser;
-//     type Output = u64;
-// }
+struct ProblemTwo;
+impl ProblemQuestion for ProblemTwo {
+    type Parser = Point3DParser;
+    type Output = i64;
+}
 
-struct DayEightSolution<const N: usize>;
+struct DayEightSolution<const N: usize = { usize::MAX }>;
 
 impl<const N: usize> DayEightSolution<N> {
 
@@ -62,18 +63,48 @@ impl<const N: usize> DayEightSolution<N> {
 
         circuits
     }
+
+    fn form_circuits_until_complete(input: &Vec<Point3D>) -> (Point3D, Point3D) {
+        let mut circuits: Vec<HashSet<Point3D>> = Vec::new();
+        
+        for (a, b) in Self::get_shortest_pairs(&input) {
+            let circuit_a_maybe = circuits.iter().position(|set: &HashSet<Point3D>| set.contains(&a));
+            let circuit_b_maybe = circuits.iter().position(|set: &HashSet<Point3D>| set.contains(&b));
+
+            match (circuit_a_maybe, circuit_b_maybe) {
+                (Some(index_a), Some(index_b)) => {
+                    if index_a != index_b {
+                        let circuit_b = circuits[index_b].clone();
+                        circuits[index_a].extend(circuit_b);
+                        circuits.remove(index_b);
+                    }
+                },
+                (None, Some(index_b)) => {
+                    circuits[index_b].insert(a);
+                },
+                (Some(index_a), None) => {
+                    circuits[index_a].insert(b);
+                },
+                (None, None) => {
+                    circuits.push(HashSet::from([a, b]));
+                }
+            }
+
+            // Check for complete circuit
+            let is_complete = circuits.len() == 1 && circuits[0].len() == input.len();
+            if is_complete {
+                return (a, b)
+            }
+        }
+
+        panic!("Expected to form complete circuit after iterations")
+    }
 }
 
 impl<const N: usize> Solution<ProblemOne> for DayEightSolution<N> {
     fn answer(input: Vec<Point3D>) -> u64 {
         let mut circuits = Self::form_circuits(&input);
         circuits.sort_by_key(|circuit| circuit.len());
-
-        for circuit in circuits.iter().rev()
-            .map(|circuit| circuit.len() as u64)
-            .take(3) {
-                println!("{circuit}")
-            }
         
         circuits.iter().rev()
             .map(|circuit| circuit.len() as u64)
@@ -82,21 +113,36 @@ impl<const N: usize> Solution<ProblemOne> for DayEightSolution<N> {
     }
 }
 
+impl<const N: usize> Solution<ProblemTwo> for DayEightSolution<N> {
+    fn answer(input: Vec<Point3D>) -> i64 {
+        let (last_a, last_b) = Self::form_circuits_until_complete(&input);
+        println!("{:?} - {:?}", last_a, last_b);
+
+        return last_a.x * last_b.x;
+    }
+}
+
+
 fn main() {
-    // 381840 Too High
     ProblemOne::solve::<DayEightSolution<1000>>(TEST_INPUT);
+    ProblemTwo::solve::<DayEightSolution>(TEST_INPUT);
 }
 
 #[cfg(test)]
 mod test {
     use common::ProblemQuestion;
-
-    use crate::{DayEightSolution, ProblemOne, TEST_EXAMPLE};
+    use crate::{DayEightSolution, ProblemOne, ProblemTwo, TEST_EXAMPLE};
 
 
     #[test]
     fn test_problem_one_example() {
         let result = ProblemOne::solve::<DayEightSolution<10>>(TEST_EXAMPLE);
         assert_eq!(result, 40)
+    }
+
+    #[test]
+    fn test_problem_two_example() {
+        let result = ProblemTwo::solve::<DayEightSolution>(TEST_EXAMPLE);
+        assert_eq!(result, 25272)
     }
 }
