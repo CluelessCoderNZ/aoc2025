@@ -19,6 +19,7 @@ pub use grid::{
     Point2D,
     Vector2D,
     Size2D,
+    Box2D,
     Rect,
 };
 pub use grid::{

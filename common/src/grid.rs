@@ -12,6 +12,7 @@ pub struct GridUnit;
 pub type Point2D = euclid::Point2D<isize, GridUnit>;
 pub type Vector2D = euclid::Vector2D<isize, GridUnit>;
 pub type Size2D = euclid::Size2D<isize, GridUnit>;
+pub type Box2D = euclid::Box2D<isize, GridUnit>;
 pub type Rect = euclid::Rect<isize, GridUnit>;
 
 
@@ -243,6 +244,16 @@ impl<T: PartialEq> Grid2D<T> {
     ) -> impl Iterator<Item = (&T, Point2D)> {
         self.element_neighbours::<D>(point)
             .filter(|(neighbour, _)| **neighbour == *search_type)
+    }
+}
+
+impl<T: Clone> Grid2D<T> {
+    pub fn new(width: isize, height: isize, fill: T) -> Self {
+        Self {
+            width, 
+            height,
+            elements: vec![fill; (width * height) as usize]
+        }
     }
 }
 
